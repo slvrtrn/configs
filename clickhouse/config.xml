@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<clickhouse>
+
+  <http_port>8123</http_port>
+  <tcp_port>9000</tcp_port>
+  <listen_host>0.0.0.0</listen_host>
+  <mysql_port>9004</mysql_port>
+  <interserver_http_port>9009</interserver_http_port>
+  
+  <users_config>users.xml</users_config>
+  <default_profile>default</default_profile>
+  <default_database>default</default_database>
+
+  <mark_cache_size>5368709120</mark_cache_size>
+
+  <path>/var/lib/clickhouse/</path>
+  <tmp_path>/var/lib/clickhouse/tmp/</tmp_path>
+  <user_files_path>/var/lib/clickhouse/user_files/</user_files_path>
+  <access_control_path>/var/lib/clickhouse/access/</access_control_path>
+
+  <query_log>
+    <database>system</database>
+    <table>query_log</table>
+    <engine>Engine = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + INTERVAL 30 day</engine>
+    <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+  </query_log>
+
+  <logger>
+    <level>trace</level>
+    <log>/var/log/clickhouse-server/clickhouse-server.log</log>
+    <errorlog>/var/log/clickhouse-server/clickhouse-server.err.log</errorlog>
+    <size>1000M</size>
+    <count>10</count>
+    <console>1</console>
+  </logger>
+
+  <keeper_server>
+    <tcp_port>9181</tcp_port>
+    <server_id>1</server_id>
+    <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
+    <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+
+    <coordination_settings>
+      <operation_timeout_ms>10000</operation_timeout_ms>
+      <session_timeout_ms>30000</session_timeout_ms>
+      <raft_logs_level>trace</raft_logs_level>
+      <rotate_log_storage_interval>10000</rotate_log_storage_interval>
+    </coordination_settings>
+
+    <raft_configuration>
+      <server>
+        <id>1</id>
+        <hostname>0.0.0.0</hostname>
+        <port>9001</port>
+      </server>
+    </raft_configuration>
+  </keeper_server>
+
+  <zookeeper>
+    <node>
+      <host>0.0.0.0</host>
+      <port>9181</port>
+    </node>
+  </zookeeper>
+
+  <distributed_ddl>
+    <path>/clickhouse/test_cluster/task_queue/ddl</path>
+  </distributed_ddl>
+  
+</clickhouse>
